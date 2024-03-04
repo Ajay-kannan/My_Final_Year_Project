@@ -124,20 +124,4 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-// final SignOut = Material(
-//   elevation: 5.0,
-//   borderRadius: BorderRadius.circular(30.0),
-//   color: Theme.of(context).primaryColor,
-//   child: MaterialButton(
-//     minWidth: MediaQuery.of(context).size.width,
-//     padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-//     onPressed: () async {
-//       await _auth.signOut();
-//     },
-//     child: Text(
-//       "Log out",
-//       style: TextStyle(color: Theme.of(context).primaryColorLight),
-//       textAlign: TextAlign.center,
-//     ),
-//   ),
-// );
+//

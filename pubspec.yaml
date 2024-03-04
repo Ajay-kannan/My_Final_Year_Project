@@ -43,6 +43,7 @@ dependencies:
   provider: ^6.1.1
   google_fonts:
   persistent_bottom_nav_bar:
+  http:
 
 dev_dependencies:
   flutter_test:
