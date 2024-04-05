@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '622073935251',
     projectId: 'plantify-ef52a',
     authDomain: 'plantify-ef52a.firebaseapp.com',
+    databaseURL: 'https://plantify-ef52a-default-rtdb.firebaseio.com/',
     storageBucket: 'plantify-ef52a.appspot.com',
     measurementId: 'G-214231MSZB',
   );
@@ -59,6 +60,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '622073935251',
     projectId: 'plantify-ef52a',
     storageBucket: 'plantify-ef52a.appspot.com',
+    databaseURL: 'https://plantify-ef52a-default-rtdb.firebaseio.com/',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

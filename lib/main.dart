@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: Provider.of<ThemeProvider>(context).themeData ,
         home: const LoaderPage(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
@@ -93,7 +94,7 @@ class _LoaderPageState extends State<LoaderPage> {
   void initState() {
     super.initState();
     // Delay navigation to login page by 1 second
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Navigator.pushReplacement(
         context as BuildContext,
         MaterialPageRoute(builder: (context) => const Wrapper()),

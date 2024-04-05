@@ -7,7 +7,7 @@ ThemeData lightMode = ThemeData(
     background: Color(0xffd9d9d9),
     primary:  Color(0xff212121),
     secondary:  Colors.white54,
-    onSurface:  Color(0xff9e9e9f),
+
   )
 );
 
@@ -17,7 +17,6 @@ ThemeData darkMode = ThemeData(
     background:  Color(0xff181a20),
     primary: Colors.white,
     secondary:  Color(0xff1f222a),
-    onSurface:  Color(0xff9e9e9f),
   )
 
 );

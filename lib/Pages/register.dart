@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:plantify/Provider/auth.dart';
 import 'package:plantify/models/loginuser.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:plantify/models/userName.dart';
 
 class Register extends StatefulWidget {
   final Function? toggleView;
@@ -18,7 +21,10 @@ class _Register extends State<Register> {
   bool _obscureText = true;
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _username = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     final emailField = TextFormField(
@@ -89,6 +95,35 @@ class _Register extends State<Register> {
           filled: true, // Set to true to enable background color
         ));
 
+    final userNameField = TextFormField(
+      controller: _username,
+      autofocus: false,
+      validator: (value) {
+        if (value == "") {
+          return 'Enter a Valid Name';
+        }
+      },
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
+      ), // Text color when typing
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "User Name",
+        hintStyle: TextStyle(color: Color(0xff9e9e9f)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          borderSide:
+          BorderSide(color: Theme.of(context).colorScheme.secondary),
+        ),
+        prefixIcon: Icon(Icons.person_pin),
+
+        fillColor: Theme.of(context)
+            .colorScheme
+            .secondary, // Set background color here
+        filled: true, // Set to true to enable background color
+      ),
+    );
+
     final txtbutton = TextButton(
         onPressed: () {
           widget.toggleView!();
@@ -124,6 +159,17 @@ class _Register extends State<Register> {
                     );
                   });
             }
+
+            // storing the username in real time database .
+
+
+            // Create a new user with a first and last name
+            UserName user = new UserName(name: _username.text, email: _email.text);
+
+          // Add a new document with a generated ID
+            db.collection("users").add(user.toJson()).then((DocumentReference doc) =>
+                print('DocumentSnapshot added with ID: ${doc.id}'));
+
           }
         },
         child: Text(
@@ -163,6 +209,8 @@ class _Register extends State<Register> {
                     style: TextStyle(fontSize: 20,color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(height: 45.0),
+                  userNameField,
+                  const SizedBox(height: 25.0),
                   emailField,
                   const SizedBox(height: 25.0),
                   passwordField,

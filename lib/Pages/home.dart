@@ -22,6 +22,7 @@ class _Home extends State<Home>{
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: BottomNavBar(),
     );
   }
@@ -96,14 +97,14 @@ class BottomNavBar extends StatelessWidget {
       items: _navBarsItems(),
       controller: controller,
       confineInSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff181a20),
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
       hideNavigationBarWhenKeyboardShows: true,
       decoration: NavBarDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
+        colorBehindNavBar: Color(0xff181a20),
       ),
       popAllScreensOnTapOfSelectedTab: true,
       popActionScreens: PopActionScreensType.all,
