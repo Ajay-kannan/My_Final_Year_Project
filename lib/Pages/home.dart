@@ -6,6 +6,7 @@ import 'package:plantify/Pages/disease-detect.dart';
 import 'package:plantify/Pages/my-plants.dart';
 import 'package:plantify/Provider/auth.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget{
   const Home({super.key});
@@ -35,8 +36,8 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> _buildScreens() {
       return [
-        const ChatBot(),
-        const ChatHistory(),
+         const ChatBot(),
+         const ChatHistory(),
         const DiseaseDetect(),
         const MyPlant(),
         const Account(),
@@ -88,14 +89,11 @@ class BottomNavBar extends StatelessWidget {
 
     }
 
-    PersistentTabController controller;
-
-    controller = PersistentTabController(initialIndex: 0);
     return PersistentTabView(
       context,
       screens:_buildScreens(),
       items: _navBarsItems(),
-      controller: controller,
+      controller: Provider.of<ThemeProvider>(context , listen: false).controller ,
       confineInSafeArea: true,
       backgroundColor: Color(0xff181a20),
       handleAndroidBackButtonPress: true,

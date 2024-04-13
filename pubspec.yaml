@@ -50,7 +50,11 @@ dependencies:
   image_picker:
   image_cropper:
   permission_handler:
-
+  dropdown_button2: ^2.3.9
+  url_launcher:
+  carousel_slider: ^4.2.1
+  youtube_player_flutter:
+  flutter_tts: ^3.1.0
 
 
 dev_dependencies:

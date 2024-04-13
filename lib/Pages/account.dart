@@ -12,6 +12,7 @@ import '../Provider/auth.dart'; // Assuming this is your Auth Provider
 import 'dart:math' as math;
 
 import 'package:expandable/expandable.dart';
+import 'package:provider/provider.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -118,38 +119,45 @@ class _AccountState extends State<Account> {
     }
 
     Widget ScanCard() {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Card(
-          elevation: 4,
-          shadowColor: Colors.grey,
-          color: Color(0xFF00a86b),
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.qr_code_scanner, color: Colors.white),
-                SizedBox(height: 16),
-                Text(
-                  "Scan Plants, Get Remedies",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
+      return GestureDetector(
+        onTap: (){
+          Provider.of<ThemeProvider>(context,
+              listen: false).changeIndex(2);
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+
+          child: Card(
+            elevation: 4,
+            shadowColor: Colors.grey,
+            color: Color(0xFF00a86b),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.qr_code_scanner, color: Colors.white),
+                  SizedBox(height: 16),
+                  Text(
+                    "Scan Plants, Get Remedies",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Your plant's health, in your hands",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
+                  SizedBox(height: 16),
+                  Text(
+                    "Your plant's health, in your hands",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

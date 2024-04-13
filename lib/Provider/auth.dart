@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:plantify/models/firebaseuser.dart';
 import 'package:plantify/models/loginuser.dart';
 import 'package:plantify/models/theme.dart';
@@ -65,8 +66,29 @@ class AuthService {
 class ThemeProvider with ChangeNotifier {
   ThemeData _themeData = darkMode;
   ThemeData get themeData => _themeData;
+
+  String _language = "english";
+  String get language => _language;
+
+  PersistentTabController _controller = PersistentTabController(initialIndex: 0, );
+  PersistentTabController get controller => _controller ;
+
+  void changeIndex(int idx){
+    _controller.jumpToTab(idx);
+  }
+
   set themeData(ThemeData themeData) {
     _themeData = themeData;
+    notifyListeners();
+  }
+
+  void changeLanuage(){
+    if(_language == "english"){
+      _language = "tamil";
+    }
+    else{
+      _language = "english";
+    }
     notifyListeners();
   }
 
@@ -78,4 +100,10 @@ class ThemeProvider with ChangeNotifier {
       themeData = lightMode;
     }
   }
+}
+
+class URLprovider {
+  static var _BaseUrl = "https://b258-14-139-161-250.ngrok-free.app";
+
+  static String get BaseUrl => _BaseUrl ;
 }
