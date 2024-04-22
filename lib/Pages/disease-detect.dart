@@ -10,6 +10,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:dio/dio.dart';
 import 'package:plantify/Provider/auth.dart';
 
+import 'AnalysisResultScreen.dart';
+
 class DiseaseDetect extends StatefulWidget {
   const DiseaseDetect({super.key});
 
@@ -35,18 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
   File? imageFile;
   var isWeb = kIsWeb;
   // Initial Selected Value
-  final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
-    'Item4',
-    'Item5',
-    'Item6',
-    'Item7',
-    'Item8',
-  ];
+  final List<String> items = ["Apple", "Cassava", "Cherry", "Chili", "Coffee", "Corn", "Cucumber", "Gauva", "Grape", "Jamun", "Lemon", "Mango", "Peach", "Pepper", "Pomegranate", "Potato", "Rice", "Soybean", "Strawberry", "Sugarcane", "Tea", "Tomato", "Wheat"];
   String? selectedValue;
-
 
   String URL = URLprovider.BaseUrl;
 
@@ -146,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             },
                             child: Text(
-                              'Select The Plant',
+                              'Select The Photo',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ButtonStyle(
@@ -262,13 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 5,
             ),
-            imageFile == null
-                ? Image.asset(
+            if (imageFile == null) Image.asset(
                     'assets/logo.png',
                     height: 250.0,
                     width: 200.0,
-                  )
-                : ClipRRect(
+                  ) else ClipRRect(
                     borderRadius: BorderRadius.circular(25.0),
                     child: Image.file(
                       imageFile!,
@@ -280,12 +270,21 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 if (imageFile != null) {
                   final client = ImageClassifierClient(
-                      baseUrl: URL ); // Replace with your actual server address
+                    baseUrl: URL,
+                  );
                   try {
                     final response = await client.predictImageClass(
-                        selectedValue!, imageFile!.path);
-                    print('Predicted class: ${response['predicted_class']}');
-                    // Handle the response, for example, display the predicted class in your UI
+                      imageFile!.path
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AnalysisResultScreen(
+                          predictedClass: response,
+                          imageFile: imageFile!,
+                        ),
+                      ),
+                    );
                   } on Exception catch (e) {
                     print('Error classifying image: $e');
                     // Handle error, for example, show an error message in your UI
@@ -293,14 +292,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               child: Text(
-                'Select Image',
+                'Analysis',
                 style: TextStyle(color: Colors.white),
               ),
               style: ButtonStyle(
                 backgroundColor: MaterialStateColor.resolveWith(
-                    (states) => Color(0xFF00a86b)),
+                      (states) => Color(0xFF00a86b),
+                ),
               ),
             )
+
           ],
         ),
       ),
@@ -454,15 +455,12 @@ class ImageClassifierClient {
 
   const ImageClassifierClient({required this.baseUrl});
 
-  Future<Map<String, dynamic>> predictImageClass(
-      String stringData, String imageFile) async {
-    print("string :" + stringData + "imagefile :" + imageFile);
+  Future<String> predictImageClass(String imageFile) async {
     File tempImage = File(imageFile);
     final Dio dio = Dio();
     final formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(tempImage.path,
           filename: tempImage.path.split('/').last),
-      'string_data': stringData,
     });
 
     try {
@@ -476,7 +474,9 @@ class ImageClassifierClient {
       );
 
       if (response.statusCode == 200) {
-        return response.data as Map<String, dynamic>;
+        Map<String, dynamic> responseData = response.data ;
+        String predicted_class = responseData['predicted_class'];
+        return predicted_class;
       } else {
         throw Exception(
             'Failed to predict image class. Status code: ${response.statusCode}');

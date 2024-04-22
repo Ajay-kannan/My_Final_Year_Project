@@ -1,49 +1,83 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-class ChatHistory extends StatefulWidget {
-  const ChatHistory({super.key});
+import 'ChatMessageScreen.dart';
 
-  @override
-  State<ChatHistory> createState() => _ChatHistoryState();
+class ChatMessage {
+  final String messageContent;
+  final String messageType;
+  final String messageContentTamil;
+  final String time;
+  final String date;
+  final String language;
+  final List<String> urlLink;
+  final List<String> images;
+  final List<String> videos;
+
+  ChatMessage({
+    required this.messageContent,
+    required this.messageType,
+    required this.videos,
+    required this.images,
+    required this.urlLink,
+    required this.language,
+    required this.messageContentTamil,
+    required this.time,
+    required this.date,
+  });
+
+  factory ChatMessage.fromFirestore(Map<String, dynamic> data) {
+    return ChatMessage(
+      messageContent: data['messageContent'] ?? '',
+      messageType: data['messageType'] ?? '',
+      messageContentTamil: data['messageContentTamil'] ?? '',
+      time: data['time'] ?? '',
+      date: data['date'] ?? '',
+      language: data['language'] ?? '',
+      urlLink: List<String>.from(data['urlLink'] ?? []),
+      images: List<String>.from(data['images'] ?? []),
+      videos: List<String>.from(data['videos'] ?? []),
+    );
+  }
 }
 
-class _ChatHistoryState extends State<ChatHistory> {
+class Conversation {
+  final String title;
+  final List<ChatMessage> messages;
 
-  List<Map<String, dynamic>> messages = [];
+  Conversation({required this.title, required this.messages});
+}
 
-  @override
-  void initState() {
-    super.initState();
-    fetchMessages();
-  }
+class ChatHistory extends StatelessWidget {
+  const ChatHistory({Key? key}) : super(key: key);
 
-  Future<void> fetchMessages() async {
+  Future<List<Conversation>> fetchConversations() async {
     try {
-      // Reference to the Firestore collection
-      CollectionReference messageCollection = FirebaseFirestore.instance.collection('chat_messages');
+      final CollectionReference messageCollection = FirebaseFirestore.instance.collection('chat_messages');
+      final User? user = FirebaseAuth.instance.currentUser;
 
-      final user = await FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final QuerySnapshot<Object?> querySnapshot =
+        await messageCollection.where('user_id', isEqualTo: user.email).get();
 
-      // Query the collection for documents where user_id is equal to widget.userEmail
-      QuerySnapshot<Object?> querySnapshot =
-      await messageCollection.where('user_id', isEqualTo: user?.email).get();
+        final List<Conversation> conversations = [];
+        querySnapshot.docs.forEach((doc) {
+          final String title = doc['title'];
+          final List<dynamic> messagesData = doc['messages'];
+          final List<ChatMessage> messages =
+          messagesData.map((data) => ChatMessage.fromFirestore(data)).toList();
+          conversations.add(Conversation(title: title, messages: messages));
+        });
 
-      // Extract the messages from the documents
-      List<Map<String, dynamic>> fetchedMessages = [];
-      querySnapshot.docs.forEach((doc) {
-        fetchedMessages.addAll(doc['messages']);
-      });
-
-
-      setState(() {
-        messages = fetchedMessages;
-      });
-
-
+        return conversations;
+      } else {
+        print('User is not signed in.');
+        return [];
+      }
     } catch (e) {
-      print('Error fetching messages: $e');
+      print('Error fetching conversations: $e');
+      return [];
     }
   }
 
@@ -51,16 +85,54 @@ class _ChatHistoryState extends State<ChatHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Message History'),
+        leading: CircleAvatar(
+          backgroundImage: AssetImage("assets/logogreen.png"),
+          radius: 30.0,
+          backgroundColor: Color(0xff181a20),
+        ), // Your logo widget
+        title: const Text(
+          "Message History",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        centerTitle: true, // Aligns title to the center
+        backgroundColor: Color(0xff181a20),
       ),
-      body: ListView.builder(
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          // Build each message item here
-          return ListTile(
-            title: Text(messages[index]['messageContent'] ?? ''),
-            // Add more message details as needed
-          );
+      body: FutureBuilder<List<Conversation>>(
+        future: fetchConversations(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (snapshot.hasData) {
+            final List<Conversation> conversations = snapshot.data!;
+            return ListView.builder(
+              itemCount: conversations.length,
+              itemBuilder: (context, index) {
+                final Conversation conversation = conversations[index];
+                return
+                  GestureDetector(
+                              onTap: () {
+                                    Navigator.push(context,MaterialPageRoute(builder: (context) => ChatMessageScreen(conversation: conversation),),);
+                                    },
+                                child: Card(
+                                          child: ListTile(
+                                            title: Text(conversation.title),
+                                          // Add more message details as needed
+                                        ),
+                                         ),
+                                   );
+                        },
+                  );
+          } else {
+            return Center(
+              child: Text('No conversations found.'),
+            );
+          }
         },
       ),
     );

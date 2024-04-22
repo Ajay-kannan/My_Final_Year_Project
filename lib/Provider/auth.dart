@@ -103,7 +103,7 @@ class ThemeProvider with ChangeNotifier {
 }
 
 class URLprovider {
-  static var _BaseUrl = "https://b258-14-139-161-250.ngrok-free.app";
+  static var _BaseUrl = "https://75b7-14-139-161-250.ngrok-free.app";
 
   static String get BaseUrl => _BaseUrl ;
 }
